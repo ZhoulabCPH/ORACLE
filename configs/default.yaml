@@ -1,0 +1,56 @@
+seed: 42
+
+paths:
+  csv_file: path.csv
+  pretrained: checkpoints/resnet_34.pth
+  output_root: outputs/three_class_no_tta
+
+columns:
+  ct_col: ct_path
+  roi_col: roi_path
+  label_col: earlylabel
+
+model:
+  name: resnet34
+  spatial_dims: 3
+  n_channels: 2
+  num_classes: 3
+  dropout_rate: 0.3
+
+training:
+  epochs: 50
+  batch_size: 16
+  base_lr: 0.0003
+  weight_decay: 0.0001
+  grad_clip: 1.0
+  accum_steps: 2
+  use_amp: true
+  early_stop_patience: 15
+  early_stop_min_delta: 0.005
+  use_focal: false
+  label_smoothing: 0.05
+  num_workers: 0
+
+augmentation:
+  enabled: true
+  rotation_range: 10
+  scale_range: [0.9, 1.10]
+  augment_prob: 0.7
+  roi_missing_as_zero: true
+  roi_channel_dropout_p: 0.3
+  add_ct_noise: true
+  ct_noise_std: 0.01
+
+scheduler:
+  use_warmup_cosine: true
+  warmup_steps_fraction: 0.1
+  min_lr: 0.0000005
+  use_onecycle: false
+  onecycle_max_lr: 0.0002
+
+data:
+  patch_shape: [64, 64, 64]
+  val_size: 0.2
+
+validation:
+  use_tta: false
